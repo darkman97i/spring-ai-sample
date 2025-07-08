@@ -1,6 +1,12 @@
 # MCP Test Environment
-
 This directory contains a test environment for the MCP (Model Context Protocol) using SSE (Server-Sent Events).
+
+This example uses:
+* spring-ai-boom 1.0.0
+* spring-ai-starter-mcp-server-webmvc
+* spring boot 3.5.3
+* an SSE endpoint configuration is established together with the application context
+
 
 ## Structure
 
@@ -10,14 +16,15 @@ This directory contains a test environment for the MCP (Model Context Protocol) 
 ## MCP Server
 
 ### Configuration
-- Port: 8081
-- Context path: `/test-mcp`
-- SSE Endpoint: `/test-mcp/mcp/sse`
-- Message Endpoint: `/test-mcp/mcp/message`
+- Port: 8080
+- Context path: `/openkm`
+- SSE Endpoint: `/openkm/sse`
+- Message Endpoint: `/openkm/mcp/message`
 
 ### Available Tools
 - `getSystemDate` - Returns current system date and time
 - `getTimestamp` - Returns current timestamp in milliseconds
+- `getAppInfo` - Returns basic information about openkm
 
 ### Execution
 ```bash
@@ -29,8 +36,6 @@ mvn spring-boot:run
 
 ### Configuration
 - Port: 8082
-- Context path: `/test-client`
-- Test Endpoint: `/test-client/test`
 
 ### Functionality
 The client establishes an SSE connection with the server, initializes the MCP session, and makes calls to the available tools.
@@ -55,11 +60,7 @@ cd mcp-client
 mvn spring-boot:run
 ```
 
-3. Test the communication:
-```bash
-curl http://localhost:8082/test-client/test
-```
-
 ## Logs
 
 Both applications are configured with DEBUG logging to view the MCP message exchange and SSE connection establishment.
+

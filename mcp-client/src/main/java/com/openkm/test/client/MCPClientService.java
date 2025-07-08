@@ -15,7 +15,7 @@ public class MCPClientService {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Autowired(required = false)
+	@Autowired
 	private SyncMcpToolCallbackProvider syncMcpToolCallbackProvider;
 
 	public String performSelfTest() {

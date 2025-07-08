@@ -19,10 +19,6 @@
     <name>MCP Server Test</name>
     <description>Test MCP Server implementation with SSE</description>
 
-    <!-- Remover propiedades que ya están definidas en el padre -->
-    <!-- Las propiedades maven.compiler.source, maven.compiler.target y project.build.sourceEncoding
-         ya están definidas en el padre, así que se pueden eliminar -->
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -46,6 +42,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>

@@ -1,1 +1,3 @@
 /.idea/
+/mcp-server/target/
+/mcp-client/target/
