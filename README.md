@@ -7,6 +7,7 @@ This example uses:
 * spring boot 3.5.3
 * an SSE endpoint configuration is established together with the application context
 * ***In the client's application.properties file, a valid OpenAI API key must be set***
+* ***In the server-client's application.properties file, a valid OpenAI API key must be set***
 
 
 ## Structure
