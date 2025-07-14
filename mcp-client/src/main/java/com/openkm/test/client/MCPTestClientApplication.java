@@ -29,16 +29,33 @@ public class MCPTestClientApplication {
 
 		return args -> {
 
+			// Inicializar manualmente los clientes MCP
+			for (McpSyncClient client : mcpClients) {
+				try {
+					if (!client.isInitialized()) {
+						client.initialize();
+						System.out.println("Cliente MCP inicializado correctamente");
+					}
+				} catch (Exception e) {
+					System.err.println("Error al inicializar el cliente MCP: " + e.getMessage());
+					return; // Salir si no se puede inicializar
+				}
+			}
+
 			var mcpToolProvider = new SyncMcpToolCallbackProvider(mcpClients);
 
 			ChatClient chatClient = ChatClient.builder(openAiChatModel).defaultToolCallbacks(mcpToolProvider).build();
 
-			String userQuestion = """
-					What is the current system date and time in my server?
-					""";
+			List<String> userQuestions = List.of(
+					"What is the current system date and time in the openkm server?",
+					"What is the openkm version?"
+			);
 
-			System.out.println("> USER: " + userQuestion);
-			System.out.println("> ASSISTANT: " + chatClient.prompt(userQuestion).call().content());
+			for (String userQuestion : userQuestions) {
+				System.out.println("> USER: " + userQuestion);
+				System.out.println("> ASSISTANT: " + chatClient.prompt(userQuestion).call().content());
+				System.out.println("---"); // Separador entre preguntas
+			}
 		};
 	}
 
