@@ -1,0 +1,58 @@
+package com.openkm.test.config;
+
+import io.modelcontextprotocol.spec.McpSchema;
+import io.modelcontextprotocol.spec.McpSchema.CreateMessageResult;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.mcp.customizer.McpSyncClientCustomizer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@SpringBootApplication(scanBasePackages = "com.openkm.test")
+public class MCPTestClientApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(MCPTestClientApplication.class, args);
+	}
+
+	@Bean
+	McpSyncClientCustomizer samplingCustomizer(Map<String, ChatClient> chatClients) {
+
+		return (name, mcpClientSpec) -> {
+
+			mcpClientSpec = mcpClientSpec.loggingConsumer(logingMessage -> {
+				System.out.println("MCP LOGGING: [" + logingMessage.level() + "] " + logingMessage.data());
+			});
+
+			mcpClientSpec.sampling(llmRequest -> {
+				var userPrompt = ((McpSchema.TextContent) llmRequest.messages().get(0).content()).text();
+				String modelHint = llmRequest.modelPreferences().hints().get(0).name();
+
+				ChatClient hintedChatClient = chatClients.entrySet().stream()
+						.filter(e -> e.getKey().contains(modelHint)).findFirst()
+						.orElseThrow().getValue();
+
+				String response = hintedChatClient.prompt()
+						.system(llmRequest.systemPrompt())
+						.user(userPrompt)
+						.call()
+						.content();
+
+				return CreateMessageResult.builder().content(new McpSchema.TextContent(response)).build();
+			});
+			System.out.println("Customizing " + name);
+		};
+	}
+
+	@Bean
+	public Map<String, ChatClient> chatClients(List<ChatModel> chatModels) {
+
+		return chatModels.stream().collect(Collectors.toMap(model -> model.getClass().getSimpleName().toLowerCase(),
+				model -> ChatClient.builder(model).build()));
+
+	}
+}
